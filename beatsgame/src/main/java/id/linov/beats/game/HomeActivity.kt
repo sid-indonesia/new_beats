@@ -1,5 +1,6 @@
 package id.linov.beats.game
 
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,7 @@ import androidx.core.content.PermissionChecker
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import com.google.android.material.snackbar.Snackbar
+import id.linov.beats.game.fragments.HomeGameFrag
 import id.linov.beats.game.fragments.UserInfoFrags
 import id.linov.beats.game.fragments.WaitingServerFrags
 import id.linov.beatslib.BEATS_STRATEGY
@@ -28,7 +30,14 @@ class HomeActivity : AppCompatActivity() {
         }
 
         override fun onConnectionInitiated(p0: String, p1: ConnectionInfo) {
-            e("SUCCESS", "onConnectionInitiated $p0")
+            startGameActivizty()
+        }
+    }
+
+    private fun startGameActivizty() {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.container, HomeGameFrag())
+            commit()
         }
     }
 

@@ -12,8 +12,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         HandlerCompat.postDelayed(Handler(), {
-            startAct(HomeActivity::class.java)
+            startAct(GameActivity::class.java)
             finish()
-        }, null, 5000)
+        }, null, 2000)
     }
 }
