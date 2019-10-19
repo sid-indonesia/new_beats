@@ -283,5 +283,8 @@
     <color name="col_r" type="color">#f50057</color>
     <color name="col_b" type="color">#00b0ff</color>
 
+    <color name="col_sel_t" type="color">#99FFFFFF</color>
+    <color name="col_sel_tx" type="color">#00FFFFFF</color>
+
 
 </resources>

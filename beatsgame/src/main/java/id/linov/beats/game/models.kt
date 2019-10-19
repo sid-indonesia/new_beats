@@ -9,18 +9,23 @@ object Game {
     var serverID: String? = null
     var userInformation: User? = null
     var gameType: GameType = GameType.PERSONAL
+    var taskActions: MutableMap<Int, MutableList<Action>> = mutableMapOf()
     var actions: MutableList<Action> = mutableListOf()
 
     var selectedOpt: Char = 'W'
 
-    fun getSelectedOptColor(): Int {
-        return when (selectedOpt) {
+    fun getColor(color: Char) : Int {
+        return when (color) {
             'R' -> R.color.col_r
             'B' -> R.color.col_b
             'Y' -> R.color.col_y
             'W' -> R.color.col_grey_1000w
             else -> R.color.col_grey_1000w
         }
+    }
+
+    fun getSelectedOptColor(): Int {
+        return getColor(selectedOpt)
     }
 }
 

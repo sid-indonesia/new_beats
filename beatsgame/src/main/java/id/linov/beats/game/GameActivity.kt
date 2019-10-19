@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.task_item.view.*
 
 class GameActivity : AppCompatActivity() {
+    var selectedTask: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,13 +40,36 @@ class GameActivity : AppCompatActivity() {
                 itemView.apply {
                     taskID.text = "${task.taskID}".padStart(2, '0')
                     setOnClickListener {
+                        saveLast(selectedTask)
+                        selectedTask = task.taskID
+                        loadTask(selectedTask)
+                        notifyDataSetChanged()
+                        notifyItemChanged(position)
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.gameContainer, GamePlayFragment.create(task))
                             .commit()
                     }
+                    if (selectedTask == task.taskID) {
+                        itemContainer.setBackgroundResource(R.color.col_sel_t)
+                    } else {
+                        itemContainer.setBackgroundResource(R.color.col_sel_tx)
+                    }
+                    icStat.visibility = if (Game.taskActions[task.taskID].isNullOrEmpty()) View.INVISIBLE else View.VISIBLE
                 }
-
             }
+        }
+    }
+
+    private fun loadTask(selectedTask: Int?) {
+        if (selectedTask != null && Game.taskActions[selectedTask] != null) {
+            Game.actions = Game.taskActions[selectedTask] ?: mutableListOf()
+        }
+    }
+
+    private fun saveLast(selectedTask: Int?) {
+        if(selectedTask != null) {
+            Game.taskActions.put(selectedTask, Game.actions)
+            Game.actions = mutableListOf()
         }
     }
 }
