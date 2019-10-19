@@ -1,4 +1,4 @@
-package id.linov.beats
+package id.linov.beats.game
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         HandlerCompat.postDelayed(Handler(), {
-            startAct(RunServerActivity::class.java)
+            startAct(HomeActivity::class.java)
             finish()
         }, null, 5000)
     }
