@@ -4,12 +4,14 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.*
+import android.util.Log.ERROR
 import android.util.Log.e
 import android.view.View
 import android.view.animation.TranslateAnimation
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import id.linov.beats.adapters.ClientsAdapter
@@ -19,12 +21,30 @@ import id.linov.beatslib.SERVICE_NAME
 import kotlinx.android.synthetic.main.activity_run_server.*
 
 class RunServerActivity : AppCompatActivity() {
+    /**
+     * TODO
+     * 1. Create Group Mechanism
+     * 1.1. Automatic Group Mechanism (random pairing)
+     * 1.2. Manual Paired group (PRIORITY)
+     * 2. Start Personal Test Session
+     * 3. Start Group Test Session
+     * 4. Sync to Server (create new server pls)
+     * 5. Group Test config (max player in a group)
+     */
+
     var started = false
     var progressing = false
     val callback = object : ConnectionLifecycleCallback() {
         override fun onConnectionResult(p0: String, p1: ConnectionResolution) {
-            e("CLC", "onConnectionResult $p0")
-
+            e("CLC", "onConnectionResult $p0 - ${p1.status}")
+            e("CLC", "onConnectionResult $p0 - ${p1.status.statusCode}")
+            if (p1.status.statusCode == 13) {
+                val p = Games.paired.find { it.first == p0 }
+                if (p != null) {
+                    Games.paired.remove(p)
+                }
+                adapter.notifyDataSetChanged()
+            }
         }
 
         override fun onDisconnected(p0: String) {

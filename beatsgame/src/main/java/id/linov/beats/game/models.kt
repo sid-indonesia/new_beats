@@ -1,5 +1,7 @@
 package id.linov.beats.game
 
+import android.graphics.Color
+
 
 /**
  * Created by Hayi Nukman at 2019-10-19
@@ -11,6 +13,19 @@ object Game {
     var userInformation: User? = null
     var gameType: GameType = GameType.PERSONAL
     var actions: MutableList<Action> = mutableListOf()
+
+    var selectedOpt: Char = 'W'
+
+    fun getSelectedOptColor(): Int {
+        return when (selectedOpt) {
+            'R' -> Color.RED
+            'G' -> Color.GREEN
+            'B' -> Color.BLUE
+            'Y' -> Color.YELLOW
+            'W' -> Color.WHITE
+            else -> Color.WHITE
+        }
+    }
 }
 
 data class User(
