@@ -278,4 +278,10 @@
 
     <color name="col_grey_1000b" type="color">#000000</color>
     <color name="col_grey_1000w" type="color">#ffffff</color>
+
+    <color name="col_y" type="color">#ffea00</color>
+    <color name="col_r" type="color">#f50057</color>
+    <color name="col_b" type="color">#00b0ff</color>
+
+
 </resources>

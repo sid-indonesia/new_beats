@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <id.linov.beats.game.GameUI
+        android:id="@+id/gameUI"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@color/col_grey_1000b"
+        android:layout_width="wrap_content"
+        android:padding="25dp"
+        android:gravity="center"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="Selected"
+            android:textColor="@color/col_grey_1000w"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"/>
+        <View
+            android:id="@+id/selected"
+            android:background="#FFD54F"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="75dp"/>
+
+        <View
+            android:id="@+id/vR"
+            android:background="@color/col_r"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"/>
+        <View
+            android:id="@+id/vB"
+            android:background="@color/col_b"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"/>
+        <View
+            android:id="@+id/vY"
+            android:background="@color/col_y"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"/>
+        <View
+            android:id="@+id/vW"
+            android:background="#FFF"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

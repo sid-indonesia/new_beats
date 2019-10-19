@@ -1,8 +1,5 @@
 package id.linov.beats.game
 
-import android.graphics.Color
-
-
 /**
  * Created by Hayi Nukman at 2019-10-19
  * https://github.com/ha-yi
@@ -18,12 +15,11 @@ object Game {
 
     fun getSelectedOptColor(): Int {
         return when (selectedOpt) {
-            'R' -> Color.RED
-            'G' -> Color.GREEN
-            'B' -> Color.BLUE
-            'Y' -> Color.YELLOW
-            'W' -> Color.WHITE
-            else -> Color.WHITE
+            'R' -> R.color.col_r
+            'B' -> R.color.col_b
+            'Y' -> R.color.col_y
+            'W' -> R.color.col_grey_1000w
+            else -> R.color.col_grey_1000w
         }
     }
 }
@@ -36,11 +32,8 @@ data class User(
     var location: Pair<Double, Double>?
 )
 
-data class Action(val timestamp: Long, val x: Int, val y: Int, val color: ColorE)
+data class Action(val timestamp: Long, val x: Int, val y: Int, val color: Char)
 
-enum class ColorE {
-    RED, YELLOW, BLUE, GREEN
-}
 enum class GameType {
     PERSONAL, GROUP
 }

@@ -29,11 +29,11 @@ class Tile @JvmOverloads constructor(
     }
 
     private fun applicate() {
-//        layoutParams = GridLayout.LayoutParams(GridLayout.spec(), size)
         setOnClickListener {
             listener.invoke(x, y)
+            setBackgroundResource(Game.getSelectedOptColor())
         }
-        setBackgroundColor(Game.getSelectedOptColor())
+        setBackgroundResource(Game.getSelectedOptColor())
     }
 
 
