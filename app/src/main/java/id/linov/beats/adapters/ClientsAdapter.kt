@@ -33,6 +33,10 @@ class ClientsAdapter : RecyclerView.Adapter<ClientsAdapter.ClientHolder>() {
                     txtID.text = it.first
                     txtID.setBackgroundColor(context.getRandomColor("300"))
                     txtName.text = it.second
+
+                    txtTasksDone.text = Games.personalData[it.first]?.map {
+                        it.key
+                    }?.joinToString() ?: "N/A"
                 }
             }
 

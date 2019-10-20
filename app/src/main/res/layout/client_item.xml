@@ -25,8 +25,19 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"/>
 
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:id="@+id/txtTasksDone"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+
     <androidx.appcompat.widget.AppCompatButton
         android:text="DISCONNECT"
+        android:visibility="gone"
         android:backgroundTint="@color/colorAccent"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"/>

@@ -5,13 +5,13 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.Log.e
 import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import kotlin.math.min
+import id.linov.beats.game.contactor.ServerContactor
+import id.linov.beatslib.Action
 
 /**
  * Created by Hayi Nukman at 2019-10-20
@@ -82,7 +82,15 @@ class GameUI @JvmOverloads constructor(
     }
 
     private fun recordTask(a: Int, b: Int) {
-        Game.actions.add(Action(System.currentTimeMillis(), a, b, Game.selectedOpt))
+        Game.actions.add(
+            Action(
+                System.currentTimeMillis(),
+                a,
+                b,
+                Game.selectedOpt
+            )
+        )
+        ServerContactor.send()
     }
 
     fun bindState(state: State) {

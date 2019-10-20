@@ -1,5 +1,12 @@
 package id.linov.beats.game
 
+import com.google.android.gms.nearby.connection.Payload
+import com.google.gson.Gson
+import id.linov.beatslib.Action
+import id.linov.beatslib.GameData
+import id.linov.beatslib.GameType
+import id.linov.beatslib.User
+
 /**
  * Created by Hayi Nukman at 2019-10-19
  * https://github.com/ha-yi
@@ -11,6 +18,7 @@ object Game {
     var gameType: GameType = GameType.PERSONAL
     var taskActions: MutableMap<Int, MutableList<Action>> = mutableMapOf()
     var actions: MutableList<Action> = mutableListOf()
+    var taskID: Int = -1
 
     var selectedOpt: Char = 'W'
 
@@ -27,18 +35,11 @@ object Game {
     fun getSelectedOptColor(): Int {
         return getColor(selectedOpt)
     }
+
+    fun currentActionPayload(): Payload {
+        return Payload.fromBytes(
+            Gson().toJson(GameData(userInformation, gameType, taskID, actions)).toByteArray()
+        )
+    }
 }
 
-data class User(
-    var name: String,
-    var email: String?,
-    var gender: String?,
-    var usia: Int?,
-    var location: Pair<Double, Double>?
-)
-
-data class Action(val timestamp: Long, val x: Int, val y: Int, val color: Char)
-
-enum class GameType {
-    PERSONAL, GROUP
-}

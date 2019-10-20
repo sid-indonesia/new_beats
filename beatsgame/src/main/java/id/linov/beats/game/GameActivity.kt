@@ -48,6 +48,7 @@ class GameActivity : AppCompatActivity() {
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.gameContainer, GamePlayFragment.create(task))
                             .commit()
+                        Game.taskID = task.taskID
                     }
                     if (selectedTask == task.taskID) {
                         itemContainer.setBackgroundResource(R.color.col_sel_t)

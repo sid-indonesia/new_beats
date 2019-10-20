@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import id.linov.beats.game.R
 import kotlinx.android.synthetic.main.fragment_game.*
 import id.linov.beats.game.Game
-import id.linov.beats.game.GameType.PERSONAL
+import id.linov.beatslib.GameType.PERSONAL
 import id.linov.beats.game.GameActivity
 
 /**

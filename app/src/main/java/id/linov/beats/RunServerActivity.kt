@@ -43,12 +43,17 @@ class RunServerActivity : AppCompatActivity() {
                 if (p != null) {
                     Games.paired.remove(p)
                 }
-                adapter.notifyDataSetChanged()
+                updateList()
             }
         }
 
         override fun onDisconnected(p0: String) {
             e("CLC", "onDisconnected $p0")
+            val p = Games.paired.find { it.first == p0 }
+            if (p != null) {
+                Games.paired.remove(p)
+            }
+            updateList()
         }
 
         override fun onConnectionInitiated(p0: String, p1: ConnectionInfo) {
@@ -67,11 +72,14 @@ class RunServerActivity : AppCompatActivity() {
 
     private fun updateList() {
         adapter.notifyDataSetChanged()
+        txtParticipanNumber.text = "${Games.paired.size} Participant"
     }
 
     val payloadCallback = object : PayloadCallback() {
         override fun onPayloadReceived(p0: String, p1: Payload) {
             e("PAYLOAD", "from $p0 : data --> ${p1}")
+            Games.save(p0, p1)
+            updateList()
         }
 
         override fun onPayloadTransferUpdate(p0: String, p1: PayloadTransferUpdate) {
