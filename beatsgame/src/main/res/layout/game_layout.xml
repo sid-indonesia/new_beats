@@ -70,12 +70,14 @@
             android:layout_height="wrap_content">
             <androidx.appcompat.widget.AppCompatButton
                 android:text="RESET"
+                android:id="@+id/btnReset"
                 android:background="@color/col_r"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:text="SAVE"
+                android:id="@+id/btnSave"
                 android:layout_marginTop="10dp"
                 android:background="@color/col_b"
                 android:layout_width="match_parent"

@@ -11,10 +11,15 @@ object Games {
             val str = String(p.asBytes()!!)
             val data = Gson().fromJson<GameData>(str, GameData::class.java)
             if (data != null) {
-                if(personalData[user] == null) {
+                if (data.actions.isNullOrEmpty()) {
+                    // reset data.
                     personalData[user] = mutableMapOf()
+                } else {
+                    if (personalData[user] == null) {
+                        personalData[user] = mutableMapOf()
+                    }
+                    personalData[user]?.put(data.taskID, data.actions)
                 }
-                personalData[user]?.put(data.taskID, data.actions)
             }
         }
     }

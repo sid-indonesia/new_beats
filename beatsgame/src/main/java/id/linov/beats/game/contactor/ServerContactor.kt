@@ -5,8 +5,11 @@ import android.content.Context
 import android.util.Log.e
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
+import com.google.gson.Gson
 import id.linov.beats.game.Game
+import id.linov.beatslib.Action
 import id.linov.beatslib.BeatsTask
+import id.linov.beatslib.GameData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
@@ -65,7 +68,7 @@ object ServerContactor {
         }
     }
 
-    fun send() {
+    fun send(onFail: (String) -> Unit) {
         e("SENDING", "sending payload.... to ${Game.serverID}")
         connection?.sendPayload(Game.serverID ?: "", Game.currentActionPayload())
             ?.addOnSuccessListener {
@@ -73,7 +76,28 @@ object ServerContactor {
             }
             ?.addOnFailureListener {
                 e("FAILED", "failed to send data (${Game.serverID}:${con?.endpointName}): ${it}")
+                onFail.invoke("failed")
             }
+    }
+
+    fun resetPlay() {
+        send {  }
+    }
+
+    fun createPayload(id: Int, act: List<Action>) = Payload.fromBytes(
+        Gson().toJson(GameData(Game.userInformation, Game.gameType, id, act)).toByteArray()
+    )
+
+    fun sendAfinal() {
+        Game.taskActions.forEach {
+            connection?.sendPayload(Game.serverID ?: "", createPayload(it.key, it.value))
+                ?.addOnSuccessListener {
+                    e("SUCCESS", "Sending payload to ${Game.serverID} ${con?.endpointName } success...")
+                }
+                ?.addOnFailureListener {
+                    e("FAILED", "failed to send data (${Game.serverID}:${con?.endpointName}): ${it}")
+                }
+        }
     }
 
     var tasks: List<BeatsTask> = listOf(

@@ -41,5 +41,12 @@ object Game {
             Gson().toJson(GameData(userInformation, gameType, taskID, actions)).toByteArray()
         )
     }
+
+    fun reset(type: GameType) {
+        gameType = type
+        taskActions = mutableMapOf()
+        actions = mutableListOf()
+        selectedOpt = 'W'
+    }
 }
 

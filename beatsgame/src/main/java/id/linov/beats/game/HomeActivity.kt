@@ -26,7 +26,7 @@ class HomeActivity : AppCompatActivity() {
     private fun startGameActivizty() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.container, HomeGameFrag())
-            commit()
+            commitAllowingStateLoss()
         }
     }
 
@@ -60,7 +60,7 @@ class HomeActivity : AppCompatActivity() {
                     tryConnect()
                 }
             })
-            commit()
+            commitAllowingStateLoss()
         }
     }
 

@@ -36,12 +36,11 @@ class HomeGameFrag: Fragment() {
     }
 
     private fun startPersonalTest() {
-        Game.gameType = PERSONAL
+        Game.reset(PERSONAL)
         startActivity(Intent(context, GameActivity::class.java))
     }
 
     private fun startGroupTest() {
 
     }
-
 }
