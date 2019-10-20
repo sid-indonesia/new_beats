@@ -97,6 +97,7 @@ class RunServerActivity : AppCompatActivity() {
             toggle()
         }
         animateButton()
+        Games.init(applicationContext)
 
         rvContent.adapter = adapter
         rvContent.layoutManager = LinearLayoutManager(this)

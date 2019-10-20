@@ -49,7 +49,17 @@ class ClientsAdapter : RecyclerView.Adapter<ClientsAdapter.ClientHolder>() {
                             gravity = Gravity.CENTER_VERTICAL
                             setMargins(0, 0, 5, 0)
                         })
+                    }
+                    val key = it.first
+                    val gg = Games.groups.filter {
+                        it.value.members?.find { it?.first == key } != null
+                    }.entries.firstOrNull()
 
+                    txtGroup.text = gg?.key
+                    txtGroup.visibility = if (gg == null) {
+                        View.GONE
+                    } else {
+                        View.VISIBLE
                     }
                 }
             }

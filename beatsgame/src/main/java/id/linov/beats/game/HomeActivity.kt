@@ -49,7 +49,6 @@ class HomeActivity : AppCompatActivity() {
             e("ERROR", "endpoint lost: $p0 ....")
             Game.serverID = null
         }
-
     }
 
     private fun requestUserInfo() {
@@ -81,6 +80,7 @@ class HomeActivity : AppCompatActivity() {
     private fun awaitConnectToServer() {
         ServerContactor.connectToServer {
             startGameActivizty()
+            ServerContactor.getMyUID()
         }
     }
 

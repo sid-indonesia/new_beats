@@ -2,10 +2,7 @@ package id.linov.beats.game
 
 import com.google.android.gms.nearby.connection.Payload
 import com.google.gson.Gson
-import id.linov.beatslib.Action
-import id.linov.beatslib.GameData
-import id.linov.beatslib.GameType
-import id.linov.beatslib.User
+import id.linov.beatslib.*
 
 /**
  * Created by Hayi Nukman at 2019-10-19
@@ -37,9 +34,7 @@ object Game {
     }
 
     fun currentActionPayload(): Payload {
-        return Payload.fromBytes(
-            Gson().toJson(GameData(userInformation, gameType, taskID, actions)).toByteArray()
-        )
+        return DataShare(CMD_GAME_DATA, GameData(userInformation, gameType, taskID, actions)).toPayload()
     }
 
     fun reset(type: GameType) {

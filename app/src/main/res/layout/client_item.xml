@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"/>
 
     <LinearLayout
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="5dp"
@@ -38,10 +39,15 @@
         </LinearLayout>
     </LinearLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:text="DISCONNECT"
+    <TextView
+        android:id="@+id/txtGroup"
+        android:gravity="center"
+        android:text="[G] Name"
         android:visibility="gone"
-        android:backgroundTint="@color/colorAccent"
+        android:textStyle="bold"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:background="@color/lime_col"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"/>
 </LinearLayout>
