@@ -16,7 +16,6 @@ import id.linov.beatslib.*
 import com.google.gson.reflect.TypeToken
 
 
-
 object ServerContactor {
     var connection: ConnectionsClient? = null
     var con: ConnectionInfo? = null
@@ -27,7 +26,7 @@ object ServerContactor {
     }
 
     fun getMyUID() {
-        connection?.sendPayload(Game.serverID?: "", DataShare(CMD_GET_MYUID, "").toPayload())
+        connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_GET_MYUID, "").toPayload())
     }
 
     val payloadServerCallback = object : PayloadCallback() {
@@ -42,7 +41,7 @@ object ServerContactor {
     }
 
     private fun hanldePayload(user: String, data: Payload) {
-        when(data.type) {
+        when (data.type) {
             Payload.Type.BYTES -> {
                 data.asBytes()?.let {
                     val str = String(it)
@@ -70,7 +69,7 @@ object ServerContactor {
         val dttp = object : TypeToken<DataShare<List<GroupData>>>() {}.type
         val dt = Gson().fromJson<DataShare<List<GroupData>>>(str, dttp)
         dt?.data?.forEach {
-            e("RECEIVED FROM SERVER", "name: ${it.name} # members: ${it.members?.joinToString() }")
+            e("RECEIVED FROM SERVER", "name: ${it.name} # members: ${it.members?.joinToString()}")
         }
         groupListener?.onData(dt)
     }
@@ -179,11 +178,20 @@ object ServerContactor {
     }
 
     fun joinGroup(selectedGroup: GroupData) {
-
+        connection?.sendPayload(
+            Game.serverID ?: "",
+            DataShare(CMD_JOIN_GROUP, selectedGroup.name).toPayload()
+        )
     }
 
     fun getGroups() {
         connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_GET_GROUPS, "").toPayload())
     }
 
+    fun addUser() {
+        connection?.sendPayload(
+            Game.serverID ?: "",
+            DataShare(CMD_ADD_USER, Game.userInformation).toPayload()
+        )
+    }
 }

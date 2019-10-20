@@ -54,8 +54,9 @@ data class DataShare<T>(
     }
 }
 
-const val CMD_GAME_DATA = 1
 const val CMD_NEW_GAME = 0
+const val CMD_GAME_DATA = 1
+const val CMD_ADD_USER = 2
 const val CMD_CREATE_GROUP = 10
 const val CMD_JOIN_GROUP = 11
 const val CMD_GET_GROUPS = 12

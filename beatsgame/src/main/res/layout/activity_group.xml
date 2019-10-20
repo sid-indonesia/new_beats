@@ -83,7 +83,7 @@
         app:layout_constraintTop_toTopOf="@id/rvGroups" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnJoin"
+        android:id="@+id/btnPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -100,6 +100,6 @@
         android:textColor="@color/col_grey_1000w"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/rvGroups"
-        app:layout_constraintTop_toBottomOf="@id/btnJoin" />
+        app:layout_constraintTop_toBottomOf="@id/btnPlay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

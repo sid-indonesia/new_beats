@@ -31,8 +31,19 @@ object Games {
                     CMD_GET_GROUPS -> getGroups(user)
                     CMD_JOIN_GROUP -> joinGroup(user, str)
                     CMD_GET_MYUID -> handleGetUID(user)
+                    CMD_ADD_USER -> addUser(user,str)
                 }
             }
+        }
+    }
+
+    private fun addUser(user: String, str: String) {
+        val tp = object : TypeToken<DataShare<User>>() {}.type
+        val data = Gson().fromJson<DataShare<User>>(str, tp)
+        if(data?.data != null) {
+            users.add(data.data.apply {
+                userID = user
+            })
         }
     }
 
@@ -100,6 +111,6 @@ object Games {
 
     // group name to list of members
     val groups: MutableMap<String, GroupData> = mutableMapOf()
-
     val personalData: MutableMap<String, MutableMap<Int, List<Action>>> = mutableMapOf()
+    val users: MutableList<User> = mutableListOf()
 }

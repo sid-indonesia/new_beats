@@ -2,6 +2,7 @@ package id.linov.beats.game
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log.e
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,7 @@ import id.linov.beats.game.contactor.ServerContactor
 import id.linov.beatslib.DataShare
 import id.linov.beatslib.GroupData
 import kotlinx.android.synthetic.main.activity_group.*
-import kotlinx.android.synthetic.main.group_item.*
+import kotlinx.android.synthetic.main.group_item.view.*
 
 class GroupActivity : AppCompatActivity(), GroupListener {
     var groupData: List<GroupData>? = null
@@ -20,7 +21,23 @@ class GroupActivity : AppCompatActivity(), GroupListener {
 
     override fun onData(data: DataShare<List<GroupData>>) {
         groupData = data.data
+        findMyGroup()
+        updateLayout()
         adapter.notifyDataSetChanged()
+    }
+
+    private fun findMyGroup() {
+        selectedGroup = null
+        groupData?.forEach { g ->
+            g.members?.forEach {
+                e("members", "${it?.first} == ${it?.second} || ${Game.userInformation?.userID}")
+
+                if (it?.first == Game.userInformation?.userID && Game.userInformation?.userID != null) {
+                    selectedGroup = g
+                    return
+                }
+            }
+        }
     }
 
     val adapter: GroupAdapter by lazy { GroupAdapter() }
@@ -28,6 +45,10 @@ class GroupActivity : AppCompatActivity(), GroupListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group)
+
+        if (Game.userInformation?.userID == null) {
+            ServerContactor.getMyUID()
+        }
 
         btnNewGroup.setOnClickListener {
             if (btnNewGroup.text.toString().toLowerCase() == "NEW Group".toLowerCase()) {
@@ -72,17 +93,22 @@ class GroupActivity : AppCompatActivity(), GroupListener {
         override fun onBindViewHolder(holder: GroupHolder, position: Int) {
             holder.bind(position)
         }
-
     }
 
     inner class GroupHolder(v: View) : RecyclerView.ViewHolder(v) {
         fun bind(position: Int) {
             itemView.apply {
-                groupData?.get(position)?.let { key ->
-                    txtGroupName.text = key.name
-                    setOnClickListener {
-                        selectedGroup = key
-                        updateLayout()
+                val item = groupData?.get(position)
+                txtGroupName.text = "${item?.name} (${item?.members?.size ?: 0})"
+                if (item?.members?.find { it?.first == Game.userInformation?.userID } != null) {
+                    btnPlay.visibility = View.GONE
+                    btnPlay.setOnClickListener {}
+                } else {
+                    btnPlay.visibility = View.VISIBLE
+                    btnPlay.setOnClickListener {
+                        if (item != null) {
+                            joinGroup(item)
+                        }
                     }
                 }
             }
@@ -98,8 +124,9 @@ class GroupActivity : AppCompatActivity(), GroupListener {
     }
 
     private fun updateLayout() {
-        txtSelectedGroup.text = selectedGroup?.name
-        btnJoin.setOnClickListener {
+        txtGroupNum.text = "${groupData?.size ?: 0} Groups"
+        txtSelectedGroup.text = selectedGroup?.name ?: "No Group"
+        btnPlay.setOnClickListener {
             if (isLead() || isJoined()) {
                 // todo start game
             } else {
@@ -110,17 +137,18 @@ class GroupActivity : AppCompatActivity(), GroupListener {
         }
 
         if (isLead()) {
-            btnJoin.text = "Start Game"
-            btnJoin.visibility = View.VISIBLE
+            btnNewGroup.visibility = View.GONE
+            btnPlay.text = "Start Game"
+            btnPlay.visibility = View.VISIBLE
             txtStatus.text = "You are the lead in this group"
         } else if (isJoined()) {
-            btnJoin.text = "Start Game"
-            btnJoin.visibility = View.GONE
+            btnNewGroup.visibility = View.GONE
+            btnPlay.text = "Start Game"
+            btnPlay.visibility = View.VISIBLE
             txtStatus.text = "You are have join this group"
         } else {
-            btnJoin.text = "Join Group"
-            btnJoin.visibility = View.VISIBLE
-            txtStatus.text = "Click 'Join Group' to join this group"
+            btnPlay.visibility = View.GONE
+            txtStatus.text = "You have't join any group yet. Select Group on left side"
         }
     }
 

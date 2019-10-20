@@ -81,6 +81,7 @@ class HomeActivity : AppCompatActivity() {
         ServerContactor.connectToServer {
             startGameActivizty()
             ServerContactor.getMyUID()
+            ServerContactor.addUser()
         }
     }
 
