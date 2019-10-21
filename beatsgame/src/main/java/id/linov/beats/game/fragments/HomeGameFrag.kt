@@ -9,8 +9,10 @@ import androidx.fragment.app.Fragment
 import id.linov.beats.game.R
 import kotlinx.android.synthetic.main.fragment_game.*
 import id.linov.beats.game.Game
-import id.linov.beats.game.GameType.PERSONAL
+import id.linov.beatslib.GameType.PERSONAL
 import id.linov.beats.game.GameActivity
+import id.linov.beats.game.GroupActivity
+import id.linov.beatslib.GameType.GROUP
 
 /**
  * Created by Hayi Nukman at 2019-10-20
@@ -36,12 +38,12 @@ class HomeGameFrag: Fragment() {
     }
 
     private fun startPersonalTest() {
-        Game.gameType = PERSONAL
+        Game.reset(PERSONAL)
         startActivity(Intent(context, GameActivity::class.java))
     }
 
     private fun startGroupTest() {
-
+        Game.reset(GROUP)
+        startActivity(Intent(context, GroupActivity::class.java))
     }
-
 }

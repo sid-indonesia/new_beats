@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/col_grey_1000b"
+    tools:context=".GroupActivity">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:text="GROUPS"
+        android:textColor="@color/col_grey_1000w"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtGroupNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:gravity="center"
+        android:text="0 Groups"
+        android:textColor="@color/col_grey_1000w"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/rvGroups"
+        app:layout_constraintEnd_toEndOf="@id/rvGroups"
+        app:layout_constraintStart_toStartOf="@id/rvGroups" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvGroups"
+        android:layout_width="250dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="20dp"
+        android:background="#88FFFFFF"
+        android:textColor="@color/col_grey_1000w"
+        app:layout_constraintBottom_toTopOf="@id/btnNewGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        app:layout_constraintStart_toStartOf="@id/rvGroups"
+        app:layout_constraintTop_toBottomOf="@id/rvGroups"
+        android:lines="1"
+        android:id="@+id/inputGN"
+        android:backgroundTint="@color/col_grey_1000w"
+        android:textColor="@color/col_grey_1000w"
+        android:textColorHint="@color/col_grey_1000w"
+        android:hint="Nama Group"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_marginLeft="16sp"
+        android:id="@+id/btnNewGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="NEW Group"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/rvGroups"
+        app:layout_constraintStart_toEndOf="@id/inputGN"
+        app:layout_constraintTop_toBottomOf="@id/rvGroups" />
+
+    <TextView
+        android:id="@+id/txtSelectedGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Group"
+        android:textColor="@color/col_grey_1000w"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/rvGroups"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/rvGroups"
+        app:layout_constraintTop_toTopOf="@id/rvGroups" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Join Group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/rvGroups"
+        app:layout_constraintTop_toBottomOf="@id/txtSelectedGroup" />
+
+    <TextView
+        android:id="@+id/txtStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You are not registered to any group"
+        android:textColor="@color/col_grey_1000w"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/rvGroups"
+        app:layout_constraintTop_toBottomOf="@id/btnPlay" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

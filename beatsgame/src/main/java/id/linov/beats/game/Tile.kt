@@ -33,8 +33,11 @@ class Tile @JvmOverloads constructor(
             listener.invoke(x, y)
             setBackgroundResource(Game.getSelectedOptColor())
         }
-        setBackgroundResource(Game.getSelectedOptColor())
+
+        Game.actions.filter { it.x == x && it.y == y }.lastOrNull()?.color?.let {
+            setBackgroundResource(Game.getColor(it))
+        } ?: kotlin.run {
+            setBackgroundResource(Game.getColor('W'))
+        }
     }
-
-
 }

@@ -9,6 +9,7 @@ import androidx.core.content.PermissionChecker
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import com.google.android.material.snackbar.Snackbar
+import id.linov.beats.game.contactor.ServerContactor
 import id.linov.beats.game.fragments.HomeGameFrag
 import id.linov.beats.game.fragments.UserInfoFrags
 import id.linov.beats.game.fragments.WaitingServerFrags
@@ -17,27 +18,15 @@ import id.linov.beatslib.SERVICE_ID
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import java.lang.Exception
 
 
 class HomeActivity : AppCompatActivity() {
-    val connCallback = object : ConnectionLifecycleCallback() {
-        override fun onConnectionResult(p0: String, p1: ConnectionResolution) {
-            e("SUCCESS", "onConnectionResult $p0")
-        }
-
-        override fun onDisconnected(p0: String) {
-            e("SUCCESS", "onDisconnected $p0")
-        }
-
-        override fun onConnectionInitiated(p0: String, p1: ConnectionInfo) {
-            startGameActivizty()
-        }
-    }
 
     private fun startGameActivizty() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.container, HomeGameFrag())
-            commit()
+            commitAllowingStateLoss()
         }
     }
 
@@ -57,9 +46,9 @@ class HomeActivity : AppCompatActivity() {
         }
 
         override fun onEndpointLost(p0: String) {
-            e("FOUND", "endpoint lost: $p0")
+            e("ERROR", "endpoint lost: $p0 ....")
+            Game.serverID = null
         }
-
     }
 
     private fun requestUserInfo() {
@@ -70,29 +59,29 @@ class HomeActivity : AppCompatActivity() {
                     tryConnect()
                 }
             })
-            commit()
+            commitAllowingStateLoss()
         }
     }
 
     private fun tryConnect() {
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.container, WaitingServerFrags().apply {
-                text = "Connecting to BEATS server"
-            })
-            commit()
+        try{
+            supportFragmentManager.beginTransaction().apply {
+                replace(R.id.container, WaitingServerFrags().apply {
+                    text = "Connecting to BEATS server"
+                })
+                commitAllowingStateLoss()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         awaitConnectToServer()
     }
 
     private fun awaitConnectToServer() {
-        Nearby.getConnectionsClient(this).requestConnection(
-            Game.userInformation?.name ?: "",
-            Game.serverID ?: "",
-            connCallback
-        ).addOnSuccessListener {
-            e("SUCCESS", "Connected to server.....")
-        }.addOnFailureListener {
-            e("FAILED", "$it")
+        ServerContactor.connectToServer {
+            startGameActivizty()
+            ServerContactor.getMyUID()
+            ServerContactor.addUser()
         }
     }
 
@@ -138,13 +127,16 @@ class HomeActivity : AppCompatActivity() {
 
     private fun awaitServer() {
         val discoveryOptions = DiscoveryOptions.Builder().setStrategy(BEATS_STRATEGY).build()
-        Nearby.getConnectionsClient(this).startDiscovery(SERVICE_ID, callback, discoveryOptions)
-            .addOnSuccessListener {
+        ServerContactor.connection?.startDiscovery(SERVICE_ID, callback, discoveryOptions)
+            ?.addOnSuccessListener {
                 e("SUCCESS", "Success founding server...")
             }
-            .addOnFailureListener {
+            ?.addOnFailureListener {
                 e("FAILED", "${it}")
                 e("FAILED", "failed to find server retrying in 5 secs...")
+                if(it.message?.contains("STATUS_ALREADY_DISCOVERING") == true) {
+                    ServerContactor.connection?.stopDiscovery()
+                }
                 GlobalScope.async {
                     Thread.sleep(5000)
                     awaitServer()

@@ -72,4 +72,13 @@
 
     </FrameLayout>
 
+    <TextView
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btToggleService"
+        app:layout_constraintEnd_toStartOf="@id/rvContent"
+        android:id="@+id/txtParticipanNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

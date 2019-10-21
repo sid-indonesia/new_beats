@@ -5,13 +5,14 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.Log.e
 import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.LinearLayout
+import com.google.android.material.snackbar.Snackbar
 import kotlin.math.min
+import id.linov.beats.game.contactor.ServerContactor
+import id.linov.beatslib.Action
 
 /**
  * Created by Hayi Nukman at 2019-10-20
@@ -71,10 +72,10 @@ class GameUI @JvmOverloads constructor(
                 tileLayout.addView(Tile(context).apply {
                     bind(w, x, y) { a, b ->
                         e("CLICKED", "Tile number: $a $b")
-                        recordTask(a,b)
+                        recordTask(a, b)
                     }
                 }, LayoutParams(w, w).apply {
-                    setMargins(1,1,1,1)
+                    setMargins(1, 1, 1, 1)
                 })
             }
         }
@@ -82,7 +83,18 @@ class GameUI @JvmOverloads constructor(
     }
 
     private fun recordTask(a: Int, b: Int) {
-        Game.actions.add(Action(System.currentTimeMillis(), a, b, Game.selectedOpt))
+        Game.actions.add(
+            Action(
+                System.currentTimeMillis(), a, b, Game.selectedOpt
+            )
+        )
+        ServerContactor.send {
+            Snackbar.make(
+                this,
+                "failed to connect to game server... Please restart....",
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
     }
 
     fun bindState(state: State) {

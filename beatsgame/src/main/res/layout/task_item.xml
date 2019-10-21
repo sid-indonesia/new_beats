@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/itemContainer"
     android:padding="5dp"
     android:gravity="center"
+    android:background="@color/col_grey_1000b"
     android:orientation="horizontal">
 
     <TextView
@@ -17,6 +19,7 @@
         android:layout_height="wrap_content"/>
 
     <ImageView
+        android:visibility="invisible"
         android:src="@drawable/ic_check_box"
         android:id="@+id/icStat"
         android:layout_width="50dp"
