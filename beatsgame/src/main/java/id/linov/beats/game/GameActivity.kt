@@ -9,17 +9,33 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import id.linov.beats.game.contactor.ServerContactor
 import id.linov.beats.game.fragments.GamePlayFragment
+import id.linov.beatslib.ActionLog
 import id.linov.beatslib.BeatsTask
+import id.linov.beatslib.interfaces.GameListener
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.task_item.view.*
 
-class GameActivity : AppCompatActivity() {
+class GameActivity : AppCompatActivity(), GameListener {
+    var activeFrament: GamePlayFragment? = null
+
+    override fun onGameData(data: ActionLog) {
+        if (activeFrament == null || Game.taskID != data.taskID) {
+            openTask(data.taskID)
+            Thread.sleep(500)
+        }
+        updateFragment(data)
+    }
+
+    fun updateFragment(data: ActionLog) {
+        activeFrament?.onGameData(data)
+    }
+
     var selectedTask: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
-
+        ServerContactor.gameDataListener = this
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = TaskAdapter()
     }
@@ -45,10 +61,7 @@ class GameActivity : AppCompatActivity() {
                         loadTask(selectedTask)
                         notifyDataSetChanged()
                         notifyItemChanged(position)
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.gameContainer, GamePlayFragment.create(task))
-                            .commit()
-                        Game.taskID = task.taskID
+                        openTask(task.taskID)
                     }
                     if (selectedTask == task.taskID) {
                         itemContainer.setBackgroundResource(R.color.col_sel_t)
@@ -59,6 +72,16 @@ class GameActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun openTask(taskID: Int) {
+        val task = ServerContactor.tasks.find { it.taskID == taskID } ?: ServerContactor.tasks.first()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.gameContainer, GamePlayFragment.create(task).also {
+                activeFrament = it
+            })
+            .commit()
+        Game.taskID = taskID
     }
 
     private fun loadTask(selectedTask: Int?) {
@@ -72,6 +95,12 @@ class GameActivity : AppCompatActivity() {
             Game.taskActions.put(selectedTask, Game.actions)
             Game.actions = mutableListOf()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // destroy listener
+        ServerContactor.gameDataListener = null
     }
 }
 

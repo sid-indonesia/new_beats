@@ -2,20 +2,21 @@ package id.linov.beats.game.contactor
 
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.util.Log.e
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import com.google.gson.Gson
 import id.linov.beats.game.Game
 import id.linov.beats.game.GroupListener
-import id.linov.beatslib.Action
 import id.linov.beatslib.BeatsTask
-import id.linov.beatslib.GameData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import id.linov.beatslib.*
 import com.google.gson.reflect.TypeToken
 import id.linov.beats.game.GameActivity
+import id.linov.beatslib.interfaces.GameListener
+import java.lang.Exception
 
 
 object ServerContactor {
@@ -32,10 +33,10 @@ object ServerContactor {
     )
 
     var connection: ConnectionsClient? = null
-    var con: ConnectionInfo? = null
     var groupListener: GroupListener? = null
     var groupData: GroupData? = null
     var appContext: Context? = null
+    var gameDataListener: GameListener? = null
 
     fun init(context: Context) {
         appContext = context
@@ -58,32 +59,98 @@ object ServerContactor {
     }
 
     private fun hanldePayload(user: String, data: Payload) {
+        e("PAYLOAD", "from $user")
         when (data.type) {
             Payload.Type.BYTES -> {
                 data.asBytes()?.let {
                     val str = String(it)
                     val dt = Gson().fromJson(str, DataShare::class.java)
+                    e("PAYLOAD", "command= ${dt?.command}")
                     when (dt?.command) {
                         CMD_GET_GROUPS -> handleGroups(user, str)
                         CMD_GET_CONFIG -> getConfig(user, str)
                         CMD_GET_MYUID -> hanldeUser(user, str)
-                        CMD_GROUP_TEST -> handleGameData(user, str)
+                        CMD_GROUP_GAME -> handleGroupGameData(user, str)
                         CMD_NEW_GAME -> handleNewGame(user)
+                        CMD_GAME_DATA -> handlePersonalGameData(user, str)
+                        CMD_GROUP_GAME_NEW -> handleOpenGroupGame(str)
+                        CMD_JOIN_GROUP -> handleGroupJoined(str)
                     }
                 }
             }
         }
     }
 
-    private fun handleNewGame(user: String) {
+    private fun handleGroupJoined(str: String) {
+        val dttp = object : TypeToken<DataShare<String>>() {}.type
+        val groupID = Gson().fromJson<DataShare<String>>(str, dttp)?.data
+        Game.groupID = groupID
+    }
+
+    private fun handleOpenGroupGame(data: String) {
+        e("PAYLOAD", "CMD_GROUP_GAME_NEW= ${data}")
+        val dttp = object : TypeToken<DataShare<List<String>>>() {}.type
+        val members = Gson().fromJson<DataShare<List<String>>>(data, dttp)?.data
+//        if(Game.groupID.isNullOrBlank() && groupID != Game.groupID) {
+//            Game.groupID = groupID
+//        }
+
+        tryConnectAllMember(members)
+
         appContext?.let {
-            Game.reset(GameType.PERSONAL)
-            it.startActivity(Intent(it, GameActivity::class.java))
+            Game.reset(GameType.GROUP)
+            Game.groupMembers = members
+            it.startActivity(Intent(it, GameActivity::class.java).apply {
+                flags = FLAG_ACTIVITY_NEW_TASK
+            })
         }
     }
 
-    private fun handleGameData(user: String, str: String) {
+    private fun tryConnectAllMember(members: List<String>?) {
+        members?.forEach {
+            val connCallback = object : ConnectionLifecycleCallback() {
+                override fun onConnectionResult(p0: String, p1: ConnectionResolution) {
+                    e("SUCCESS", "onConnectionResult $p0")
+                }
 
+                override fun onDisconnected(p0: String) {
+                    e("SUCCESS", "onDisconnected $p0")
+                }
+
+                override fun onConnectionInitiated(p0: String, p1: ConnectionInfo) {
+                    connection?.acceptConnection(p0, payloadServerCallback)
+                }
+            }
+            connection?.requestConnection(Game.userInformation?.name ?: "", it, connCallback)
+        }
+    }
+
+    private fun handlePersonalGameData(user: String, str: String) {
+        val dttp = object : TypeToken<DataShare<ActionLog>>() {}.type
+        val session = Gson().fromJson<DataShare<ActionLog>>(str, dttp).data
+        try {
+            gameDataListener?.onGameData(session)
+        } catch (e: Exception) {}
+    }
+
+    private fun handleNewGame(user: String) {
+        e("NEW GAME", "New game created :$user")
+        appContext?.let {
+            Game.reset(GameType.PERSONAL)
+            it.startActivity(Intent(it, GameActivity::class.java).apply {
+                flags = FLAG_ACTIVITY_NEW_TASK
+            })
+        }
+    }
+
+    private fun handleGroupGameData(user: String, str: String) {
+        if (groupListener != null || groupData == null) {
+            // todo still in group page
+            return
+        }
+        val dttp = object : TypeToken<DataShare<ActionLog>>() {}.type
+        val session = Gson().fromJson<DataShare<ActionLog>>(str, dttp).data
+        gameDataListener?.onGameData(session)
     }
 
     private fun hanldeUser(user: String, str: String) {
@@ -143,7 +210,11 @@ object ServerContactor {
     }
 
     fun sendAction(actionLog: ActionLog) {
-        connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_GAME_DATA, actionLog).toPayload())
+        var recipient:MutableList<String> = (if (Game.groupID != null) Game.groupMembers ?: listOf() else listOf()).toMutableList()
+        recipient.add(Game.serverID ?: "")
+        e("Sending to ", "members ${recipient.joinToString()}")
+
+        connection?.sendPayload(recipient, DataShare(CMD_GAME_DATA, actionLog).toPayload())
     }
 
     fun startNewPersonalGame() {
@@ -178,5 +249,9 @@ object ServerContactor {
             Game.serverID ?: "",
             DataShare(CMD_ADD_USER, Game.userInformation).toPayload()
         )
+    }
+
+    fun startNewGroupGame() {
+        connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_GROUP_GAME_NEW, Game.groupID).toPayload())
     }
 }

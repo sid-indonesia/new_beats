@@ -69,7 +69,7 @@ data class DataShare<T>(
 }
 
 data class TileInfo(
-    var color: Colors = Colors.W,
+    var color: Colors,
     var timestamp: Long,
     var userID: String? = null
 )
@@ -149,7 +149,8 @@ const val CMD_JOIN_GROUP = 11
 const val CMD_GET_GROUPS = 12
 const val CMD_GET_CONFIG = 20
 const val CMD_GET_MYUID = 99
-const val CMD_GROUP_TEST =  70
+const val CMD_GROUP_GAME_NEW =  70
+const val CMD_GROUP_GAME =  71
 
 const val CMD_GAME_SESSION_DATA = 100
 

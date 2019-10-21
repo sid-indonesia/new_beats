@@ -17,7 +17,8 @@ object Game {
     var actions: MutableList<Action> = mutableListOf()
     var taskID: Int = -1
     var selectedOpt: Colors = Colors.W
-    var groupID: String = ""
+    var groupID: String? = ""
+    var groupMembers: List<String>? = listOf()
 
     fun getColor(color: Colors) : Int {
         return when (color) {
@@ -42,6 +43,7 @@ object Game {
         taskActions = mutableMapOf()
         actions = mutableListOf()
         selectedOpt = Colors.W
+        groupMembers = listOf()
     }
 }
 

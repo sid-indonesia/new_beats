@@ -11,14 +11,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import id.linov.beats.game.contactor.ServerContactor
+import id.linov.beatslib.ActionLog
 import id.linov.beatslib.DataShare
-import id.linov.beatslib.GameData
+import id.linov.beatslib.GameSession
 import id.linov.beatslib.GroupData
-import id.linov.beatslib.interfaces.GroupGameListener
+import id.linov.beatslib.interfaces.GameListener
 import kotlinx.android.synthetic.main.activity_group.*
 import kotlinx.android.synthetic.main.group_item.view.*
 
-class GroupActivity : AppCompatActivity(), GroupListener, GroupGameListener {
+class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
+    override fun onGameData(dt: ActionLog) {
+        startActivity(Intent(this, GameActivity::class.java))
+    }
+
     var groupData: List<GroupData>? = null
     var selectedGroup: GroupData? = null
 
@@ -30,16 +35,12 @@ class GroupActivity : AppCompatActivity(), GroupListener, GroupGameListener {
         adapter.notifyDataSetChanged()
     }
 
-    override fun onGameData(int: Int, data: GameData) {
-        // always start activity here
-        startActivity(Intent(this, GameActivity::class.java))
-    }
-
     private fun updateListener() {
         if(isJoined()) {
             ServerContactor.groupData = selectedGroup
         } else {
             ServerContactor.groupData = null
+            Game.groupID = null
         }
     }
 
@@ -51,6 +52,7 @@ class GroupActivity : AppCompatActivity(), GroupListener, GroupGameListener {
 
                 if (it == Game.userInformation?.userID && Game.userInformation?.userID != null) {
                     selectedGroup = g
+                    Game.groupID = g.name
                     return
                 }
             }
@@ -100,6 +102,7 @@ class GroupActivity : AppCompatActivity(), GroupListener, GroupGameListener {
     override fun onDestroy() {
         super.onDestroy()
         ServerContactor.groupData = null
+        Game.groupID = null
     }
 
     inner class GroupAdapter : RecyclerView.Adapter<GroupHolder>() {
@@ -154,6 +157,7 @@ class GroupActivity : AppCompatActivity(), GroupListener, GroupGameListener {
         btnPlay.setOnClickListener {
             if (isLead() || isJoined()) {
                 // todo start game
+                ServerContactor.startNewGroupGame()
             } else {
                 selectedGroup?.let {
                     joinGroup(it)

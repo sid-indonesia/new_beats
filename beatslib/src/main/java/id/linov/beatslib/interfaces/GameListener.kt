@@ -1,6 +1,8 @@
 package id.linov.beatslib.interfaces
 
+import id.linov.beatslib.ActionLog
 import id.linov.beatslib.GameData
+import id.linov.beatslib.GameSession
 
 
 /**
@@ -8,6 +10,6 @@ import id.linov.beatslib.GameData
  * https://github.com/ha-yi
  */
  
-interface GroupGameListener {
-    fun onGameData(int: Int, data: GameData)
+interface GameListener {
+    fun onGameData(data: ActionLog)
 }
