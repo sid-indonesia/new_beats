@@ -1,5 +1,6 @@
 package id.linov.beats.game
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log.e
@@ -11,11 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import id.linov.beats.game.contactor.ServerContactor
 import id.linov.beatslib.DataShare
+import id.linov.beatslib.GameData
 import id.linov.beatslib.GroupData
+import id.linov.beatslib.interfaces.GroupGameListener
 import kotlinx.android.synthetic.main.activity_group.*
 import kotlinx.android.synthetic.main.group_item.view.*
 
-class GroupActivity : AppCompatActivity(), GroupListener {
+class GroupActivity : AppCompatActivity(), GroupListener, GroupGameListener {
     var groupData: List<GroupData>? = null
     var selectedGroup: GroupData? = null
 
@@ -23,7 +26,21 @@ class GroupActivity : AppCompatActivity(), GroupListener {
         groupData = data.data
         findMyGroup()
         updateLayout()
+        updateListener()
         adapter.notifyDataSetChanged()
+    }
+
+    override fun onGameData(int: Int, data: GameData) {
+        // always start activity here
+        startActivity(Intent(this, GameActivity::class.java))
+    }
+
+    private fun updateListener() {
+        if(isJoined()) {
+            ServerContactor.groupData = selectedGroup
+        } else {
+            ServerContactor.groupData = null
+        }
     }
 
     private fun findMyGroup() {
@@ -60,9 +77,6 @@ class GroupActivity : AppCompatActivity(), GroupListener {
                 Snackbar.make(it, "Nama Group tidak boleh kosong", Snackbar.LENGTH_LONG).show()
             }
         }
-
-        ServerContactor.groupListener(this)
-        ServerContactor.getGroups()
         rvGroups.adapter = adapter
         rvGroups.layoutManager = LinearLayoutManager(this)
     }
@@ -72,9 +86,20 @@ class GroupActivity : AppCompatActivity(), GroupListener {
         inputGN.visibility = View.GONE
     }
 
+    override fun onPause() {
+        super.onPause()
+        ServerContactor.removeGroupListenet()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ServerContactor.groupListener(this)
+        ServerContactor.getGroups()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        ServerContactor.removeGroupListenet()
+        ServerContactor.groupData = null
     }
 
     inner class GroupAdapter : RecyclerView.Adapter<GroupHolder>() {

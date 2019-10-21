@@ -1,6 +1,7 @@
 package id.linov.beats.game.contactor
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log.e
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
@@ -14,14 +15,30 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import id.linov.beatslib.*
 import com.google.gson.reflect.TypeToken
+import id.linov.beats.game.GameActivity
 
 
 object ServerContactor {
+    val tasks: List<BeatsTask> = listOf(
+        BeatsTask(0, 10, duration = 120000),
+        BeatsTask(1, 10, duration = 120000),
+        BeatsTask(2, 10, duration = 120000),
+        BeatsTask(3, 15, duration = 120000),
+        BeatsTask(4, 15, duration = 120000),
+        BeatsTask(5, 15, duration = 120000),
+        BeatsTask(6, 20, duration = 120000),
+        BeatsTask(7, 20, duration = 120000),
+        BeatsTask(8, 20, duration = 120000)
+    )
+
     var connection: ConnectionsClient? = null
     var con: ConnectionInfo? = null
     var groupListener: GroupListener? = null
+    var groupData: GroupData? = null
+    var appContext: Context? = null
 
     fun init(context: Context) {
+        appContext = context
         connection = Nearby.getConnectionsClient(context)
     }
 
@@ -50,10 +67,23 @@ object ServerContactor {
                         CMD_GET_GROUPS -> handleGroups(user, str)
                         CMD_GET_CONFIG -> getConfig(user, str)
                         CMD_GET_MYUID -> hanldeUser(user, str)
+                        CMD_GROUP_TEST -> handleGameData(user, str)
+                        CMD_NEW_GAME -> handleNewGame(user)
                     }
                 }
             }
         }
+    }
+
+    private fun handleNewGame(user: String) {
+        appContext?.let {
+            Game.reset(GameType.PERSONAL)
+            it.startActivity(Intent(it, GameActivity::class.java))
+        }
+    }
+
+    private fun handleGameData(user: String, str: String) {
+
     }
 
     private fun hanldeUser(user: String, str: String) {
@@ -112,58 +142,13 @@ object ServerContactor {
         }
     }
 
-    fun send(onFail: (String) -> Unit) {
-        e("SENDING", "sending payload.... to ${Game.serverID}")
-        connection?.sendPayload(Game.serverID ?: "", Game.currentActionPayload())
-            ?.addOnSuccessListener {
-                e("SUCCESS", "Sending payload to ${Game.serverID} ${con?.endpointName} success...")
-            }
-            ?.addOnFailureListener {
-                e("FAILED", "failed to send data (${Game.serverID}:${con?.endpointName}): ${it}")
-                onFail.invoke("failed")
-            }
+    fun sendAction(actionLog: ActionLog) {
+        connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_GAME_DATA, actionLog).toPayload())
     }
 
-    fun resetPlay() {
-        send { }
+    fun startNewPersonalGame() {
+        connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_NEW_GAME, "").toPayload())
     }
-
-    fun createPayload(id: Int, act: List<Action>) = DataShare(
-        CMD_GAME_DATA,
-        GameData(
-            Game.userInformation,
-            Game.gameType,
-            id,
-            act
-        )
-    ).toPayload()
-
-    fun sendAfinal() {
-        Game.taskActions.forEach {
-            connection?.sendPayload(Game.serverID ?: "", createPayload(it.key, it.value))
-                ?.addOnSuccessListener {
-                    e(
-                        "SUCCESS",
-                        "Sending payload to ${Game.serverID} ${con?.endpointName} success..."
-                    )
-                }
-                ?.addOnFailureListener {
-                    e(
-                        "FAILED",
-                        "failed to send data (${Game.serverID}:${con?.endpointName}): ${it}"
-                    )
-                }
-        }
-    }
-
-    var tasks: List<BeatsTask> = listOf(
-        BeatsTask(0, 10, duration = 120000),
-        BeatsTask(1, 10, duration = 120000),
-        BeatsTask(2, 15, duration = 120000),
-        BeatsTask(3, 15, duration = 120000),
-        BeatsTask(4, 20, duration = 120000),
-        BeatsTask(5, 20, duration = 120000)
-    )
 
     fun createGroup(name: String) {
         connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_CREATE_GROUP, name).toPayload())

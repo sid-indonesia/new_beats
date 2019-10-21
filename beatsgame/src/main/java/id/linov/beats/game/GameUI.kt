@@ -12,7 +12,9 @@ import android.widget.LinearLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlin.math.min
 import id.linov.beats.game.contactor.ServerContactor
-import id.linov.beatslib.Action
+import id.linov.beatslib.*
+import id.linov.beatslib.GameType.PERSONAL
+import id.linov.beatslib.GameType.GROUP
 
 /**
  * Created by Hayi Nukman at 2019-10-20
@@ -23,12 +25,12 @@ class GameUI @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    val mainLayout = LinearLayout(context)
-    val tileLayout = GridLayout(context)
-    val optionsLayout = LinearLayout(context)
+    private val mainLayout = LinearLayout(context)
+    private val tileLayout = GridLayout(context)
+    private val optionsLayout = LinearLayout(context)
 
-    var state: State = State()
-    var needRedraw = true
+    private var state: State = State()
+    private var needRedraw = true
 
     init {
         setBackgroundResource(R.color.col_grey_1000b)
@@ -83,18 +85,17 @@ class GameUI @JvmOverloads constructor(
     }
 
     private fun recordTask(a: Int, b: Int) {
-        Game.actions.add(
-            Action(
-                System.currentTimeMillis(), a, b, Game.selectedOpt
+        val act = Action(
+            a, b, TileInfo(
+                Game.selectedOpt,
+                System.currentTimeMillis(),
+                Game.userInformation?.userID
             )
         )
-        ServerContactor.send {
-            Snackbar.make(
-                this,
-                "failed to connect to game server... Please restart....",
-                Snackbar.LENGTH_LONG
-            ).show()
-        }
+        Game.actions.add(act)
+
+        val group = if (Game.gameType == PERSONAL) null else Game.groupID
+        ServerContactor.sendAction(ActionLog(Game.userInformation?.userID, group, Game.taskID, Game.gameType, act))
     }
 
     fun bindState(state: State) {
@@ -105,8 +106,5 @@ class GameUI @JvmOverloads constructor(
     class State {
         var tileX: Int = 10
         var tileY: Int = 10
-
-        var options: List<Char> = listOf('R', 'B', 'Y')
-        var tileListener: ((x: Int, y: Int, col: Char) -> Unit)? = null
     }
 }
