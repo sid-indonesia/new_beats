@@ -97,4 +97,24 @@
         android:layout_height="wrap_content"/>
 
 
+    <LinearLayout
+        android:background="#CC000000"
+        android:id="@+id/llProgress"
+        android:gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+        <TextView
+            android:textColor="#FFF"
+            android:layout_marginTop="15dp"
+            android:text="Creating new game..."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

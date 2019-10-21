@@ -13,7 +13,7 @@ import id.linov.beatslib.GameType.PERSONAL
 import id.linov.beats.game.GameActivity
 import id.linov.beats.game.GroupActivity
 import id.linov.beatslib.GameType.GROUP
-
+import id.linov.beats.game.contactor.ServerContactor
 /**
  * Created by Hayi Nukman at 2019-10-20
  * https://github.com/ha-yi
@@ -37,9 +37,14 @@ class HomeGameFrag: Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        llProgress.visibility = View.GONE
+    }
+
     private fun startPersonalTest() {
-        Game.reset(PERSONAL)
-        startActivity(Intent(context, GameActivity::class.java))
+        llProgress.visibility = View.VISIBLE
+        ServerContactor.startNewPersonalGame()
     }
 
     private fun startGroupTest() {

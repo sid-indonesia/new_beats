@@ -2,9 +2,13 @@ package id.linov.beats.game
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log.e
 import android.view.View
 import android.widget.GridLayout
+import androidx.core.view.setPadding
+import id.linov.beatslib.TileInfo
 
+import id.linov.beatslib.Colors
 /**
  * Created by Hayi Nukman at 2019-10-20
  * https://github.com/ha-yi
@@ -33,11 +37,17 @@ class Tile @JvmOverloads constructor(
             listener.invoke(x, y)
             setBackgroundResource(Game.getSelectedOptColor())
         }
+        setBackgroundResource(Game.getColor(Colors.W))
 
-        Game.actions.filter { it.x == x && it.y == y }.lastOrNull()?.color?.let {
-            setBackgroundResource(Game.getColor(it))
-        } ?: kotlin.run {
-            setBackgroundResource(Game.getColor('W'))
-        }
+//        Game.actions.filter { it.x == x && it.y == y }.lastOrNull()?.color?.let {
+//            setBackgroundResource(Game.getColor(it))
+//        } ?: kotlin.run {
+//            setBackgroundResource(Game.getColor('W'))
+//        }
+    }
+
+    fun updateTile(tileInfo: TileInfo) {
+        e("UPDATE TILE", "color: ($x, $y) : ${tileInfo.color}")
+        setBackgroundResource(Game.getColor(tileInfo.color))
     }
 }

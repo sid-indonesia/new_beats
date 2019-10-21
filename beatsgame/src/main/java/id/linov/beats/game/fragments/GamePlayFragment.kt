@@ -11,7 +11,9 @@ import id.linov.beats.game.GameUI
 import id.linov.beats.game.R
 import id.linov.beatslib.BeatsTask
 import kotlinx.android.synthetic.main.game_layout.*
-import id.linov.beats.game.contactor.ServerContactor
+import id.linov.beatslib.ActionLog
+import id.linov.beatslib.Board
+import id.linov.beatslib.Colors
 
 /**
  * Created by Hayi Nukman at 2019-10-20
@@ -19,9 +21,17 @@ import id.linov.beats.game.contactor.ServerContactor
  */
 
 class GamePlayFragment: Fragment() {
+    lateinit var board: Board
+    fun onGameData(data: ActionLog) {
+        gameUI?.updateTiles(data) ?: run {
+            board.saveAction(data.action)
+        }
+    }
+
     companion object {
         fun create(x: BeatsTask): GamePlayFragment = GamePlayFragment().apply {
             task = x
+            board = Board(x.taskID, x.tileNumber)
         }
     }
 
@@ -40,26 +50,27 @@ class GamePlayFragment: Fragment() {
         gameUI.bindState(GameUI.State().apply {
             tileY = task.tileNumber
             tileX = task.tileNumber
+            initBoard = board
         })
         updateSelection()
 
         vR.setOnClickListener {
-            Game.selectedOpt = 'R'
+            Game.selectedOpt = Colors.R
             updateSelection()
         }
 
         vB.setOnClickListener {
-            Game.selectedOpt = 'B'
+            Game.selectedOpt = Colors.B
             updateSelection()
         }
 
         vY.setOnClickListener {
-            Game.selectedOpt = 'Y'
+            Game.selectedOpt = Colors.Y
             updateSelection()
         }
 
         vW.setOnClickListener {
-            Game.selectedOpt = 'W'
+            Game.selectedOpt = Colors.W
             updateSelection()
         }
 
@@ -71,7 +82,7 @@ class GamePlayFragment: Fragment() {
                     Game.taskActions = mutableMapOf()
                     Game.actions = mutableListOf()
                     gameUI.invalidate()
-                    ServerContactor.resetPlay()
+//                    ServerContactor.startNewPersonalGame()
                     di.dismiss()
                 }
                 .setNegativeButton("Cancel") { di, _ ->
@@ -84,7 +95,7 @@ class GamePlayFragment: Fragment() {
                 .setTitle("FINISH")
                 .setMessage("Finish board and send all data to server?")
                 .setPositiveButton("OK") { di, _ ->
-                    ServerContactor.sendAfinal()
+//                    ServerContactor.sendAfinal()
                     activity?.finish()
                     di.dismiss()
                 }
@@ -92,8 +103,6 @@ class GamePlayFragment: Fragment() {
                     di.dismiss()
                 }.show()
         }
-
-
     }
 
     private fun updateSelection() {

@@ -16,15 +16,16 @@ object Game {
     var taskActions: MutableMap<Int, MutableList<Action>> = mutableMapOf()
     var actions: MutableList<Action> = mutableListOf()
     var taskID: Int = -1
+    var selectedOpt: Colors = Colors.W
+    var groupID: String? = ""
+    var groupMembers: List<String>? = listOf()
 
-    var selectedOpt: Char = 'W'
-
-    fun getColor(color: Char) : Int {
+    fun getColor(color: Colors) : Int {
         return when (color) {
-            'R' -> R.color.col_r
-            'B' -> R.color.col_b
-            'Y' -> R.color.col_y
-            'W' -> R.color.col_grey_1000w
+            Colors.R -> R.color.col_r
+            Colors.B -> R.color.col_b
+            Colors.Y -> R.color.col_y
+            Colors.W -> R.color.col_grey_1000w
             else -> R.color.col_grey_1000w
         }
     }
@@ -41,7 +42,8 @@ object Game {
         gameType = type
         taskActions = mutableMapOf()
         actions = mutableListOf()
-        selectedOpt = 'W'
+        selectedOpt = Colors.W
+        groupMembers = listOf()
     }
 }
 
