@@ -58,7 +58,7 @@ object Games {
         val tp = object : TypeToken<DataShare<String>>() {}.type
         val data = Gson().fromJson<DataShare<String>>(str, tp)?.data
         data?.let {
-            groups[it]?.members?.add(paired.find { it.first == user })
+            groups[it]?.members?.add(user)
             // send response groups.
             getGroups(user)
         }
@@ -80,9 +80,7 @@ object Games {
                 it, GroupData(
                     it,
                     user,
-                    mutableListOf(
-                        paired.find { it.first == user }
-                    ),
+                    mutableSetOf(user),
                     paired.find { it.first == user }?.second
                 )
             )

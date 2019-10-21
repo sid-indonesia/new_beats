@@ -52,7 +52,7 @@ class ClientsAdapter : RecyclerView.Adapter<ClientsAdapter.ClientHolder>() {
                     }
                     val key = it.first
                     val gg = Games.groups.filter {
-                        it.value.members?.find { it?.first == key } != null
+                        it.value.members?.find { it == key } != null
                     }.entries.firstOrNull()
 
                     txtGroup.text = gg?.key

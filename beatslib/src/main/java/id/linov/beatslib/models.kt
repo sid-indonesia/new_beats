@@ -41,7 +41,7 @@ enum class GameType {
 data class GroupData(
     var name: String,
     var leadID: String,
-    var members: MutableList<Pair<String,String>?>?,
+    var members: MutableSet<String>?,
     var leadUserEndpointName: String? = null
 )
 

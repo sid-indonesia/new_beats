@@ -30,9 +30,9 @@ class GroupActivity : AppCompatActivity(), GroupListener {
         selectedGroup = null
         groupData?.forEach { g ->
             g.members?.forEach {
-                e("members", "${it?.first} == ${it?.second} || ${Game.userInformation?.userID}")
+                e("members", "${it} == ${Game.userInformation?.userID}")
 
-                if (it?.first == Game.userInformation?.userID && Game.userInformation?.userID != null) {
+                if (it == Game.userInformation?.userID && Game.userInformation?.userID != null) {
                     selectedGroup = g
                     return
                 }
@@ -100,7 +100,7 @@ class GroupActivity : AppCompatActivity(), GroupListener {
             itemView.apply {
                 val item = groupData?.get(position)
                 txtGroupName.text = "${item?.name} (${item?.members?.size ?: 0})"
-                if (item?.members?.find { it?.first == Game.userInformation?.userID } != null) {
+                if (item?.members?.find { it == Game.userInformation?.userID } != null) {
                     btnPlay.visibility = View.GONE
                     btnPlay.setOnClickListener {}
                 } else {
@@ -120,7 +120,7 @@ class GroupActivity : AppCompatActivity(), GroupListener {
     }
 
     fun isJoined(): Boolean {
-        return selectedGroup?.members?.find { it?.first == Game.userInformation?.userID }?.first != null || isLead()
+        return selectedGroup?.members?.find { it == Game.userInformation?.userID } != null || isLead()
     }
 
     private fun updateLayout() {
