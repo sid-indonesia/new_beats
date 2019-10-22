@@ -71,7 +71,7 @@ class GameUI @JvmOverloads constructor(
         tileLayout.columnCount = state.tileX
 
         val w = (min(tileLayout.measuredWidth, tileLayout.measuredHeight) / state.tileX) - 2
-        e("Drawing tile", "W = $w")
+//        e("Drawing tile", "W = $w")
         for (y in 0 until state.tileY) {
             var tRow: Array<Tile> = arrayOf()
             for (x in 0 until state.tileX) {

@@ -15,12 +15,10 @@ object Games {
     var ctx: Context? = null
     var con: ConnectionInfo? = null
 
-    val paired: MutableList<Pair<String, String>> = mutableListOf()
-
     // group name to list of members
     val groups: MutableMap<String, GroupData> = mutableMapOf()
     val personalData: MutableMap<String, MutableMap<Int, List<Action>>> = mutableMapOf()
-    val users: MutableList<User> = mutableListOf()
+    val users: MutableMap<String, User> = mutableMapOf()
 
     val gameSessions: MutableMap<String, GameSession> = mutableMapOf()
     val groupSessions: MutableMap<String, GameSession> = mutableMapOf()
@@ -33,6 +31,7 @@ object Games {
         if (p.type == Payload.Type.BYTES) {
             p.asBytes()?.let {
                 val str = String(it)
+                e("PAYLOAD", "FROM $user $str")
                 val dt = Gson().fromJson<DataShare<Any>>(str, DataShare::class.java)
                 when (dt?.command) {
                     CMD_GAME_DATA -> saveGameData(user, str)
@@ -83,9 +82,9 @@ object Games {
         val tp = object : TypeToken<DataShare<User>>() {}.type
         val data = Gson().fromJson<DataShare<User>>(str, tp)
         if (data?.data != null) {
-            users.add(data.data.apply {
+            users[user] = data.data.apply {
                 userID = user
-            })
+            }
         }
     }
 
@@ -108,8 +107,12 @@ object Games {
         val data = Gson().fromJson<DataShare<String>>(str, tp)?.data
         data?.let {
             groups[it]?.members?.add(user)
+            users[user]?.groupID = data
             // send response groups.
             getGroups(user)
+            groups[it]?.let { g ->
+                send(g.leadID, g.members, CMD_GROUP_NEW_MEMBER)
+            }
         }
         send(user, data, CMD_JOIN_GROUP)
     }
@@ -128,12 +131,15 @@ object Games {
                     it,
                     user,
                     mutableSetOf(user),
-                    paired.find { it.first == user }?.second
+                    users[user]?.name
                 )
             )
             e("SERVER", "new group created ")
+            users[user]?.groupID = data
+            users[user]?.isGroupOwner = true
+
             getGroups(user)
-            send(user, data, CMD_JOIN_GROUP)
+            send(user, data, CMD_CREATE_GROUP)
         }
     }
 /*

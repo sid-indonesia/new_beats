@@ -18,6 +18,8 @@ object Game {
     var taskID: Int = -1
     var selectedOpt: Colors = Colors.W
     var groupID: String? = ""
+    var groupLeadID: String? = ""
+    val myID: String? get() = userInformation?.userID
     var groupMembers: List<String>? = listOf()
 
     fun getColor(color: Colors) : Int {
@@ -44,6 +46,10 @@ object Game {
         actions = mutableListOf()
         selectedOpt = Colors.W
         groupMembers = listOf()
+    }
+
+    fun isGroupLead(): Boolean {
+        return gameType == GameType.PERSONAL || (gameType == GameType.GROUP && myID == groupLeadID)
     }
 }
 

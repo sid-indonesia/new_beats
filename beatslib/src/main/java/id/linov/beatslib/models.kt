@@ -25,10 +25,12 @@ data class GameData(
 
 data class User(
     var name: String,
-    var email: String?,
-    var gender: String?,
-    var usia: Int?,
-    var location: Pair<Double, Double>?,
+    var email: String? = null,
+    var gender: String? = null,
+    var usia: Int? = null,
+    var location: Pair<Double, Double>? = null,
+    var groupID: String? = null,
+    var isGroupOwner: Boolean = false,
     var userID: String? = null
 )
 
@@ -153,6 +155,7 @@ const val CMD_GET_CONFIG = 20
 const val CMD_GET_MYUID = 99
 const val CMD_GROUP_GAME_NEW =  70
 const val CMD_GROUP_GAME =  71
+const val CMD_GROUP_NEW_MEMBER =  13
 
 const val CMD_GAME_SESSION_DATA = 100
 

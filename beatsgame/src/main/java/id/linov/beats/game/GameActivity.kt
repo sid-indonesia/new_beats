@@ -41,14 +41,20 @@ class GameActivity : AppCompatActivity(), GameListener {
 
     private var timer = object: CountDownTimer(120000, 1000) {
         override fun onFinish() {
-            AlertDialog.Builder(this@GameActivity)
-                .setTitle("Task ${selectedTask?.toString()?.padStart(2, '0')}")
-                .setMessage("Waktu pengerjaan sudah habis.")
-                .setCancelable(false)
-                .setPositiveButton("Lanjut Ke Task berikutnya") { di, _ ->
-                    di.dismiss()
-                    onOpenTask((selectedTask?: 0) + 1)
-                }.show()
+            if (Game.isGroupLead()) {
+                AlertDialog.Builder(this@GameActivity)
+                    .setTitle("Task ${selectedTask?.toString()?.padStart(2, '0')}")
+                    .setMessage("Waktu pengerjaan sudah habis.")
+                    .setCancelable(false)
+                    .setPositiveButton("Lanjut Ke Task berikutnya") { di, _ ->
+
+                        di.dismiss()
+                        onOpenTask((selectedTask ?: 0) + 1)
+                        updateButton()
+                    }.show()
+            } else {
+                activeFrament?.onGroupGameFinished()
+            }
         }
 
         override fun onTick(millisUntilFinished: Long) {
@@ -66,6 +72,7 @@ class GameActivity : AppCompatActivity(), GameListener {
     override fun onOpenTask(taskID: Int?) {
         taskID?.let {
             if (taskID > ServerContactor.tasks.last().taskID) {
+                timer.cancel()
                 alltaskFinished()
             } else {
                 selectedTask = taskID
@@ -100,16 +107,28 @@ class GameActivity : AppCompatActivity(), GameListener {
         initView()
     }
 
+    private fun updateButton() {
+        btnStartGame.text = if (selectedTask == ServerContactor.tasks.last().taskID) "FINISH" else "NEXT"
+    }
+
     private fun initView() {
         btnStartGame.setOnClickListener {
             timer.cancel()
-            onOpenTask((selectedTask?: -1) + 1)
-            if (Game.groupID != null && Game.gameType == GameType.GROUP) {
+            if (Game.groupID != null && Game.gameType == GameType.GROUP && Game.isGroupLead()) {
                 // only update when it on group
-                ServerContactor.startNewTask(selectedTask ?: 0)
+                ServerContactor.startNewTask((selectedTask ?: -1) + 1)
+            } else {
+                onOpenTask((selectedTask ?: -1) + 1)
             }
-            btnStartGame.text = if (selectedTask == ServerContactor.tasks.last().taskID) "FINISH" else "NEXT"
+            updateButton()
         }
+        val vis = if (Game.isGroupLead()) {
+            View.VISIBLE
+        } else {
+            View.INVISIBLE
+        }
+        btnStartGame.visibility = vis
+        btnEndGame.visibility = vis
     }
 
     override fun onBackPressed() {
@@ -167,6 +186,7 @@ class GameActivity : AppCompatActivity(), GameListener {
     }
 
     private fun startTimer() {
+        timer.cancel()
         timer.start()
     }
 

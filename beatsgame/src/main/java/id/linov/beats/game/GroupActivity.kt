@@ -20,6 +20,10 @@ import kotlinx.android.synthetic.main.activity_group.*
 import kotlinx.android.synthetic.main.group_item.view.*
 
 class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
+    override fun onMembers(data: List<String>) {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onOpenTask(taskID: Int?) {
         startActivity(Intent(this, GameActivity::class.java))
     }
@@ -45,6 +49,7 @@ class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
         } else {
             ServerContactor.groupData = null
             Game.groupID = null
+            Game.groupLeadID = null
         }
     }
 
@@ -57,6 +62,7 @@ class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
                 if (it == Game.userInformation?.userID && Game.userInformation?.userID != null) {
                     selectedGroup = g
                     Game.groupID = g.name
+                    Game.groupLeadID = g.leadID
                     return
                 }
             }
@@ -193,4 +199,5 @@ class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
 
 interface GroupListener {
     fun onData(data: DataShare<List<GroupData>>)
+    fun onMembers(data: List<String>)
 }
