@@ -44,7 +44,7 @@ class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
     }
 
     private fun updateListener() {
-        if(isJoined()) {
+        if (isJoined()) {
             ServerContactor.groupData = selectedGroup
         } else {
             ServerContactor.groupData = null
@@ -58,7 +58,6 @@ class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
         groupData?.forEach { g ->
             g.members?.forEach {
                 e("members", "${it} == ${Game.userInformation?.userID}")
-
                 if (it == Game.userInformation?.userID && Game.userInformation?.userID != null) {
                     selectedGroup = g
                     Game.groupID = g.name
@@ -139,11 +138,11 @@ class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
                 val item = groupData?.get(position)
                 txtGroupName.text = "${item?.name} (${item?.members?.size ?: 0})"
                 if (item?.members?.find { it == Game.userInformation?.userID } != null) {
-                    btnPlay.visibility = View.GONE
-                    btnPlay.setOnClickListener {}
+                    btnJoin.visibility = View.GONE
+                    btnJoin.setOnClickListener {}
                 } else {
-                    btnPlay.visibility = View.VISIBLE
-                    btnPlay.setOnClickListener {
+                    btnJoin.visibility = View.VISIBLE
+                    btnJoin.setOnClickListener {
                         if (item != null) {
                             joinGroup(item)
                         }
@@ -158,16 +157,18 @@ class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
     }
 
     fun isJoined(): Boolean {
-        return selectedGroup?.members?.find { it == Game.userInformation?.userID } != null || isLead()
+        return selectedGroup?.members?.find { it == Game.userInformation?.userID } != null
     }
 
     private fun updateLayout() {
         txtGroupNum.text = "${groupData?.size ?: 0} Groups"
         txtSelectedGroup.text = selectedGroup?.name ?: "No Group"
         btnPlay.setOnClickListener {
-            if (isLead() || isJoined()) {
+            if (isLead()) {
                 // todo start game
                 ServerContactor.startNewGroupGame()
+            } else if (isJoined()) {
+                ServerContactor.leaveGroup()
             } else {
                 selectedGroup?.let {
                     joinGroup(it)
@@ -182,12 +183,14 @@ class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
             txtStatus.text = "You are the lead in this group"
         } else if (isJoined()) {
             btnNewGroup.visibility = View.GONE
-            btnPlay.text = "Start Game"
+            btnPlay.text = "Leave Group"
             btnPlay.visibility = View.VISIBLE
             txtStatus.text = "You are have join this group"
         } else {
             btnPlay.visibility = View.GONE
             txtStatus.text = "You have't join any group yet. Select Group on left side"
+            btnNewGroup.visibility = View.VISIBLE
+            btnNewGroup.text = "NEW Group"
         }
     }
 

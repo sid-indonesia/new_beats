@@ -42,10 +42,7 @@ class RunServerActivity : AppCompatActivity() {
             if (p1.status.statusCode == 13) {
                 val user = Games.users[p0]
                 if (user != null) {
-                    val g = user.groupID
-                    g?.let {
-                        Games.groups[g]?.members?.remove(p0)
-                    }
+                    Games.leaveGroup(p0)
                     Games.users.remove(p0)
                 }
                 updateList()
@@ -56,10 +53,7 @@ class RunServerActivity : AppCompatActivity() {
             e("CLC", "onDisconnected $p0")
             val user = Games.users[p0]
             if (user != null) {
-                val g = user.groupID
-                g?.let {
-                    Games.groups[g]?.members?.remove(p0)
-                }
+                Games.leaveGroup(p0)
                 Games.users.remove(p0)
 
             }

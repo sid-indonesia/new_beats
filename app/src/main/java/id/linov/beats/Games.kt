@@ -43,8 +43,23 @@ object Games {
                     CMD_NEW_GAME -> handleNewGame(user)
                     CMD_GROUP_GAME_NEW -> handleCreateGroupGame(user, str)
                     CMD_START_TASK -> broadcastTaskID(user, str)
+                    CMD_GROUP_LEAVE -> leaveGroup(user)
                 }
             }
+        }
+    }
+
+    fun leaveGroup(user: String) {
+        val grp = users[user]?.groupID
+        grp?.let {
+            groups[grp]?.members?.remove(user)
+            if (groups[grp]?.members.isNullOrEmpty()){
+                groups.remove(grp)
+            } else if (groups[grp]?.leadID == user) {
+                groups[grp]?.leadID = groups[grp]?.members?.firstOrNull() ?: ""
+            }
+            send(users.map { it.key }, groups.values.toList(), CMD_GET_GROUPS)
+            users[user]?.groupID = null
         }
     }
 
@@ -99,6 +114,12 @@ object Games {
         ctx?.let {
             Nearby.getConnectionsClient(it)
                 .sendPayload(user, DataShare(cmd, data).toPayload())
+        }
+    }
+    private fun <T>send(users: List<String>, data: T, cmd: Int) {
+        ctx?.let {
+            Nearby.getConnectionsClient(it)
+                .sendPayload(users, DataShare(cmd, data).toPayload())
         }
     }
 
