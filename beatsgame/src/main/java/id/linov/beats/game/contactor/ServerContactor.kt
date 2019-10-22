@@ -285,4 +285,8 @@ object ServerContactor {
     fun finished() {
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    fun leaveGroup() {
+        connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_GROUP_LEAVE, "").toPayload())
+    }
 }
