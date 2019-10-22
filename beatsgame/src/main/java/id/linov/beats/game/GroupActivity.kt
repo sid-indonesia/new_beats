@@ -20,6 +20,10 @@ import kotlinx.android.synthetic.main.activity_group.*
 import kotlinx.android.synthetic.main.group_item.view.*
 
 class GroupActivity : AppCompatActivity(), GroupListener, GameListener {
+    override fun onOpenTask(taskID: Int?) {
+        startActivity(Intent(this, GameActivity::class.java))
+    }
+
     override fun onGameData(dt: ActionLog) {
         startActivity(Intent(this, GameActivity::class.java))
     }

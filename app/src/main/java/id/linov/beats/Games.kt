@@ -43,7 +43,19 @@ object Games {
                     CMD_ADD_USER -> addUser(user, str)
                     CMD_NEW_GAME -> handleNewGame(user)
                     CMD_GROUP_GAME_NEW -> handleCreateGroupGame(user, str)
+                    CMD_START_TASK -> broadcastTaskID(user, str)
                 }
+            }
+        }
+    }
+
+    private fun broadcastTaskID(user: String, str: String) {
+        val tp = object : TypeToken<DataShare<GroupTask>>() {}.type
+        val grpTask = Gson().fromJson<DataShare<GroupTask>>(str, tp)?.data
+        grpTask?.let {
+            val dts = groups[it.groupID]?.members?.toList() ?: listOf()
+            ctx?.let {ctx ->
+                Nearby.getConnectionsClient(ctx).sendPayload(dts, DataShare(CMD_START_TASK, it.taskID).toPayload())
             }
         }
     }

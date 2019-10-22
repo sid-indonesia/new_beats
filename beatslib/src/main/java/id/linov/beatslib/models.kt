@@ -137,6 +137,8 @@ data class GameSession(
     }
 }
 
+data class GroupTask(val groupID: String, val taskID: Int)
+
 enum class Colors {
     R, G, B, Y, W
 }
@@ -154,3 +156,4 @@ const val CMD_GROUP_GAME =  71
 
 const val CMD_GAME_SESSION_DATA = 100
 
+const val CMD_START_TASK = 101

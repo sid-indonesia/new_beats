@@ -12,4 +12,5 @@ import id.linov.beatslib.GameSession
  
 interface GameListener {
     fun onGameData(data: ActionLog)
+    fun onOpenTask(taskID: Int?)
 }
