@@ -47,7 +47,7 @@ class GameActivity : AppCompatActivity(), GameListener {
                     .setMessage("Waktu pengerjaan sudah habis.")
                     .setCancelable(false)
                     .setPositiveButton("Lanjut Ke Task berikutnya") { di, _ ->
-
+                        ServerContactor.startNewTask((selectedTask ?: 0) + 1)
                         di.dismiss()
                         onOpenTask((selectedTask ?: 0) + 1)
                         updateButton()
