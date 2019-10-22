@@ -75,10 +75,17 @@ object ServerContactor {
                         CMD_GAME_DATA -> handlePersonalGameData(user, str)
                         CMD_GROUP_GAME_NEW -> handleOpenGroupGame(str)
                         CMD_JOIN_GROUP -> handleGroupJoined(str)
+                        CMD_START_TASK -> handleStartTask(str)
                     }
                 }
             }
         }
+    }
+
+    private fun handleStartTask(str: String) {
+        val dttp = object : TypeToken<DataShare<Int>>() {}.type
+        val taskID = Gson().fromJson<DataShare<Int>>(str, dttp)?.data
+        gameDataListener?.onOpenTask(taskID)
     }
 
     private fun handleGroupJoined(str: String) {
@@ -118,10 +125,13 @@ object ServerContactor {
                 }
 
                 override fun onConnectionInitiated(p0: String, p1: ConnectionInfo) {
+                    e("SUCCESS", "accept member $p0")
                     connection?.acceptConnection(p0, payloadServerCallback)
                 }
             }
-            connection?.requestConnection(Game.userInformation?.name ?: "", it, connCallback)
+            connection?.requestConnection(Game.userInformation?.name ?: "", it, connCallback)?.addOnFailureListener { e ->
+                e("failed", "failed pairing to member  $it $e")
+            }
         }
     }
 
@@ -253,5 +263,13 @@ object ServerContactor {
 
     fun startNewGroupGame() {
         connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_GROUP_GAME_NEW, Game.groupID).toPayload())
+    }
+
+    fun startNewTask(taskID: Int) {
+        connection?.sendPayload(Game.serverID ?: "", DataShare(CMD_START_TASK, GroupTask(Game.groupID?: "", taskID)).toPayload())
+    }
+
+    fun finished() {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

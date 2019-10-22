@@ -285,7 +285,9 @@
 
     <color name="col_sel_t" type="color">#99FFFFFF</color>
     <color name="col_sel_tx" type="color">#00FFFFFF</color>
-    <item name="lime_col" type="color">#aeea00</item>
+    <color name="lime_col" type="color">#aeea00</color>
 
+    <color name="col_warn">#dd2c00</color>
+    <color name="col_next">#00b8d4</color>
 
 </resources>
