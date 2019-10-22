@@ -25,7 +25,7 @@ class ClientsAdapter : RecyclerView.Adapter<ClientsAdapter.ClientHolder>() {
         LayoutInflater.from(parent.context).inflate(R.layout.client_item, parent, false)
     )
 
-    override fun getItemCount(): Int = Games.paired.size
+    override fun getItemCount(): Int = Games.users.size
 
     override fun onBindViewHolder(holder: ClientHolder, position: Int) {
         holder.bind(position)
@@ -34,12 +34,14 @@ class ClientsAdapter : RecyclerView.Adapter<ClientsAdapter.ClientHolder>() {
     class ClientHolder(v: View) : RecyclerView.ViewHolder(v) {
         fun bind(pos: Int) {
             itemView.apply {
-                Games.paired[pos].let {
-                    txtID.text = it.first
+                val key = Games.users.keys.toList()[pos]
+
+                Games.users[key]?.let {
+                    txtID.text = key
                     txtID.setBackgroundColor(context.getRandomColor("300"))
-                    txtName.text = it.second
+                    txtName.text = it.name
                     llProgress.removeAllViews()
-                    Games.personalData[it.first]?.forEach {
+                    Games.personalData[key]?.forEach {
                         llProgress.addView(TextView(context).apply {
                             text = "${it.key}".padStart(2, '0')
                             gravity = Gravity.CENTER
@@ -50,13 +52,9 @@ class ClientsAdapter : RecyclerView.Adapter<ClientsAdapter.ClientHolder>() {
                             setMargins(0, 0, 5, 0)
                         })
                     }
-                    val key = it.first
-                    val gg = Games.groups.filter {
-                        it.value.members?.find { it == key } != null
-                    }.entries.firstOrNull()
 
-                    txtGroup.text = gg?.key
-                    txtGroup.visibility = if (gg == null) {
+                    txtGroup.text = it.groupID
+                    txtGroup.visibility = if (it.groupID.isNullOrBlank()) {
                         View.GONE
                     } else {
                         View.VISIBLE

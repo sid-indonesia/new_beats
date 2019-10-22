@@ -38,16 +38,9 @@ class Tile @JvmOverloads constructor(
             setBackgroundResource(Game.getSelectedOptColor())
         }
         setBackgroundResource(Game.getColor(Colors.W))
-
-//        Game.actions.filter { it.x == x && it.y == y }.lastOrNull()?.color?.let {
-//            setBackgroundResource(Game.getColor(it))
-//        } ?: kotlin.run {
-//            setBackgroundResource(Game.getColor('W'))
-//        }
     }
 
     fun updateTile(tileInfo: TileInfo) {
-        e("UPDATE TILE", "color: ($x, $y) : ${tileInfo.color}")
         setBackgroundResource(Game.getColor(tileInfo.color))
     }
 }

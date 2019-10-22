@@ -59,13 +59,12 @@ object ServerContactor {
     }
 
     private fun hanldePayload(user: String, data: Payload) {
-        e("PAYLOAD", "from $user")
         when (data.type) {
             Payload.Type.BYTES -> {
                 data.asBytes()?.let {
                     val str = String(it)
+                    e("PAYLOAD", "FROM $user $str")
                     val dt = Gson().fromJson(str, DataShare::class.java)
-                    e("PAYLOAD", "command= ${dt?.command}")
                     when (dt?.command) {
                         CMD_GET_GROUPS -> handleGroups(user, str)
                         CMD_GET_CONFIG -> getConfig(user, str)
@@ -75,10 +74,27 @@ object ServerContactor {
                         CMD_GAME_DATA -> handlePersonalGameData(user, str)
                         CMD_GROUP_GAME_NEW -> handleOpenGroupGame(str)
                         CMD_JOIN_GROUP -> handleGroupJoined(str)
+                        CMD_CREATE_GROUP -> handleGroupCreated(str)
                         CMD_START_TASK -> handleStartTask(str)
+                        CMD_GROUP_NEW_MEMBER -> handleNewMemberJoined(str)
                     }
                 }
             }
+        }
+    }
+
+    private fun handleGroupCreated(str: String) {
+        val dttp = object : TypeToken<DataShare<String>>() {}.type
+        val groupID = Gson().fromJson<DataShare<String>>(str, dttp)?.data
+        Game.groupID = groupID
+        Game.groupLeadID = Game.myID
+    }
+
+    private fun handleNewMemberJoined(str: String) {
+        val dttp = object : TypeToken<DataShare<List<String>>>() {}.type
+        val mmbrs = Gson().fromJson<DataShare<List<String>>>(str, dttp)?.data
+        mmbrs?.let {
+            groupListener?.onMembers(mmbrs)
         }
     }
 
@@ -98,9 +114,6 @@ object ServerContactor {
         e("PAYLOAD", "CMD_GROUP_GAME_NEW= ${data}")
         val dttp = object : TypeToken<DataShare<List<String>>>() {}.type
         val members = Gson().fromJson<DataShare<List<String>>>(data, dttp)?.data
-//        if(Game.groupID.isNullOrBlank() && groupID != Game.groupID) {
-//            Game.groupID = groupID
-//        }
 
         tryConnectAllMember(members)
 

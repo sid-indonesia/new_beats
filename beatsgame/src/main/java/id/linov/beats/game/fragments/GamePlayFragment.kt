@@ -28,6 +28,10 @@ class GamePlayFragment: Fragment() {
         }
     }
 
+    fun onGroupGameFinished() {
+        placeholder.visibility = View.VISIBLE
+    }
+
     companion object {
         fun create(x: BeatsTask): GamePlayFragment = GamePlayFragment().apply {
             task = x
@@ -47,6 +51,7 @@ class GamePlayFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        placeholder.visibility = View.GONE
         gameUI.bindState(GameUI.State().apply {
             tileY = task.tileNumber
             tileX = task.tileNumber

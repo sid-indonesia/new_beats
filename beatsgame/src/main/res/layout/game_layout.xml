@@ -1,90 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
-
-    <id.linov.beats.game.GameUI
-        android:id="@+id/gameUI"
-        android:layout_weight="1"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center" />
+        android:orientation="horizontal">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:background="@color/col_grey_1000b"
-        android:layout_width="wrap_content"
-        android:gravity="center"
-        android:layout_height="match_parent">
-        <View
+        <id.linov.beats.game.GameUI
+            android:id="@+id/gameUI"
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="0dp"/>
-
-        <TextView
-            android:text="Selected"
-            android:textColor="@color/col_grey_1000w"
-            android:layout_width="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_height="wrap_content"/>
-        <View
-            android:id="@+id/selected"
-            android:background="#FFD54F"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="75dp"/>
-
-        <View
-            android:id="@+id/vR"
-            android:background="@color/col_r"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp"/>
-        <View
-            android:id="@+id/vB"
-            android:background="@color/col_b"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp"/>
-        <View
-            android:id="@+id/vY"
-            android:background="@color/col_y"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp"/>
-        <View
-            android:id="@+id/vW"
-            android:background="#FFF"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp"/>
-        <View
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="0dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
 
         <LinearLayout
             android:orientation="vertical"
+            android:background="@color/col_grey_1000b"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <androidx.appcompat.widget.AppCompatButton
-                android:text="RESET"
-                android:id="@+id/btnReset"
-                android:background="@color/col_r"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            android:gravity="center"
+            android:layout_height="match_parent">
+            <View
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"/>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:text="SAVE"
-                android:id="@+id/btnSave"
-                android:layout_marginTop="10dp"
-                android:background="@color/col_b"
-                android:layout_width="match_parent"
+            <TextView
+                android:text="Selected"
+                android:textColor="@color/col_grey_1000w"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_height="wrap_content"/>
+            <View
+                android:id="@+id/selected"
+                android:background="#FFD54F"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="75dp"/>
+
+            <View
+                android:id="@+id/vR"
+                android:background="@color/col_r"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"/>
+            <View
+                android:id="@+id/vB"
+                android:background="@color/col_b"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"/>
+            <View
+                android:id="@+id/vY"
+                android:background="@color/col_y"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"/>
+            <View
+                android:id="@+id/vW"
+                android:background="#FFF"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"/>
+
+            <LinearLayout
+                android:visibility="invisible"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:text="RESET"
+                    android:visibility="gone"
+                    android:id="@+id/btnReset"
+                    android:background="@color/col_r"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:text="SAVE"
+                    android:id="@+id/btnSave"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/col_b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/placeholder"
+        android:clickable="false"
+        android:background="#60636363"
+        android:gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="FINISHED"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:textColor="@color/col_grey_1000w"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="Waiting for group lead to start next task"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/col_grey_1000w"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</FrameLayout>

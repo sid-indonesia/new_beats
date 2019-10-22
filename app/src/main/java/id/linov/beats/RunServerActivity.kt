@@ -18,6 +18,7 @@ import id.linov.beats.adapters.ClientsAdapter
 import id.linov.beatslib.BEATS_STRATEGY
 import id.linov.beatslib.SERVICE_ID
 import id.linov.beatslib.SERVICE_NAME
+import id.linov.beatslib.User
 import kotlinx.android.synthetic.main.activity_run_server.*
 
 class RunServerActivity : AppCompatActivity() {
@@ -39,9 +40,13 @@ class RunServerActivity : AppCompatActivity() {
             e("CLC", "onConnectionResult $p0 - ${p1.status}")
             e("CLC", "onConnectionResult $p0 - ${p1.status.statusCode}")
             if (p1.status.statusCode == 13) {
-                val p = Games.paired.find { it.first == p0 }
-                if (p != null) {
-                    Games.paired.remove(p)
+                val user = Games.users[p0]
+                if (user != null) {
+                    val g = user.groupID
+                    g?.let {
+                        Games.groups[g]?.members?.remove(p0)
+                    }
+                    Games.users.remove(p0)
                 }
                 updateList()
             }
@@ -49,9 +54,14 @@ class RunServerActivity : AppCompatActivity() {
 
         override fun onDisconnected(p0: String) {
             e("CLC", "onDisconnected $p0")
-            val p = Games.paired.find { it.first == p0 }
-            if (p != null) {
-                Games.paired.remove(p)
+            val user = Games.users[p0]
+            if (user != null) {
+                val g = user.groupID
+                g?.let {
+                    Games.groups[g]?.members?.remove(p0)
+                }
+                Games.users.remove(p0)
+
             }
             updateList()
         }
@@ -61,7 +71,7 @@ class RunServerActivity : AppCompatActivity() {
             Nearby.getConnectionsClient(this@RunServerActivity).acceptConnection(p0, payloadCallback)
                 .addOnSuccessListener {
                     e("SUCCESS", "PAIRED WITH ${p1.endpointName} $p0")
-                    Games.paired.add(p0 to p1.endpointName)
+                    Games.users[p0] = User(p1.endpointName)
                     updateList()
                 }
                 .addOnFailureListener {
@@ -72,7 +82,7 @@ class RunServerActivity : AppCompatActivity() {
 
     private fun updateList() {
         adapter.notifyDataSetChanged()
-        txtParticipanNumber.text = "${Games.paired.size} Participant"
+        txtParticipanNumber.text = "${Games.users.size} Participant"
     }
 
     val payloadCallback = object : PayloadCallback() {
